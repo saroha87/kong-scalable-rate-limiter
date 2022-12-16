@@ -104,7 +104,8 @@ return {
                                             required = true
                                        },
                             required = true,
-                            default = nil
+                            default = nil,
+                        },
                     },
                     {
                         redis_password = { 
