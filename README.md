@@ -70,7 +70,7 @@ OR
 | header_name | string | | true (limit_by: header) | The header name by which to limit the requests if limit_by is selected as header |
 | policy | string | redis | true | Update redis at each request (redis) or in batches (batch-redis)  |
 | batch_size | integer | 10 | true (when policy: batch-redis) | Redis counters will be updated in batches of this size  |
-| redis_host | string |  | true | Redis host |
+| redis_host | string |  | true | List of Redis host:port. If port is not defined the redis_port is used |
 | redis_port | integer | 6379 | true | Redis port |
 | redis_password | string | | false | Redis password |
 | redis_connect_timeout(ms) | integer | 200 | true | Redis connect timeout |
