@@ -100,7 +100,7 @@ return {
                     {
                         redis_host = {
                             type = "set", 
-                            elements =typedefs.host {
+                            elements =typedefs.host_with_optional_port {
                                             required = true
                                        },
                             required = true,
