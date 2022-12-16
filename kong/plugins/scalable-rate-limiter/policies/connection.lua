@@ -17,14 +17,14 @@ local function get_redis_config(source_config)
     for _, host in pairs(source_config.redis_host) do
         local res, err_or_port = utils.normalize_ip(host)
         myport = source_config.redis_port
+        if type(res.port) == "number" then
+                myport = res.port
+        end 
         -- If not ipv4 and not ipv6 adress then we need to resolve hostname to ip
-        if type(err_or_port) == "string" and err_or_port ~= "invalid port number" then
+        if res.type == "name" then
             dns_client = require("kong.tools.dns")(kong.configuration)  -- configure DNS client
             table.insert(hosts, {ip = dns_client.toip(source_config.redis_host) , port = myport })
-        else
-            if type(res.port) == "number" then
-                myport = res.port
-            end 
+        else 
              table.insert(hosts, {ip = res.ip , port = myport })
         end
     end
