@@ -98,9 +98,13 @@ return {
                     --     },
                     -- },
                     {
-                        redis_host = typedefs.host {
-                            required = true
-                        },
+                        redis_host = {
+                            type = "set", 
+                            elements =typedefs.host {
+                                            required = true
+                                       },
+                            required = true,
+                            default = nil
                     },
                     {
                         redis_password = { 
