@@ -1,12 +1,12 @@
 package = "kong-scalable-rate-limiter"
 
-version = "1.1.0-2"
+version = "1.1.1-1"
 
 supported_platforms = {"linux", "macosx"}
 
 source = {
     url = "git://github.com/saroha87/kong-scalable-rate-limiter",
-    tag = "v1.1.0"
+    tag = "v1.1.1"
 }
 
 description = {
