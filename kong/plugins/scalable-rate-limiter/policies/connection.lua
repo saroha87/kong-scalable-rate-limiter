@@ -4,25 +4,33 @@ local resty_lock = require "resty.lock"
 local worker = ngx.worker
 local inspect = require "inspect"
 local dns_client = require "kong.resty.dns.client"
-local ipmatcher = require "resty.ipmatcher"
 local _M = {}
+local utils = require "kong.tools.utils"
 
 local data = {
     conn_pool = nil
 }
 
 local function get_redis_config(source_config)
-    -- If not ipv4 and not ipv6 adress then we need to resolve hostname to ip
-    if not ipmatcher.parse_ipv4(source_config.redis_host) and not ipmatcher.parse_ipv6(source_config.redis_host) then
-      dns_client = require("kong.tools.dns")(kong.configuration)  -- configure DNS client
-      source_config.redis_host = dns_client.toip(source_config.redis_host)
+    local hosts = { }
+    local myport = source_config.redis_port
+    for _, host in pairs(source_config.redis_host) do
+        local res, err_or_port = utils.normalize_ip(host)
+        myport = source_config.redis_port
+        -- If not ipv4 and not ipv6 adress then we need to resolve hostname to ip
+        if type(err_or_port) == "string" and err_or_port ~= "invalid port number" then
+            dns_client = require("kong.tools.dns")(kong.configuration)  -- configure DNS client
+            table.insert(hosts, {ip = dns_client.toip(source_config.redis_host) , port = myport })
+        else
+            if type(res.port) == "number" then
+                myport = res.port
+            end 
+             table.insert(hosts, {ip = res.ip , port = myport })
+        end
     end
-    
     return {
         name = "d11-redis-cluster",
-        serv_list = {
-            { ip = source_config.redis_host, port = source_config.redis_port}
-        },
+        serv_list = hosts,
         keepalive_timeout = source_config.redis_keepalive_timeout,
         keepalive_cons = source_config.redis_pool_size,
         connect_timeout = source_config.redis_connect_timeout,
