@@ -23,9 +23,9 @@ local function get_redis_config(source_config)
         -- If not ipv4 and not ipv6 adress then we need to resolve hostname to ip
         if res.type == "name" then
             dns_client = require("kong.tools.dns")(kong.configuration)  -- configure DNS client
-            table.insert(hosts, {ip = dns_client.toip(source_config.redis_host) , port = myport })
+            table.insert(hosts, {ip = dns_client.toip(res.host) , port = myport })
         else 
-             table.insert(hosts, {ip = res.ip , port = myport })
+             table.insert(hosts, {ip = res.host , port = myport })
         end
     end
     return {
